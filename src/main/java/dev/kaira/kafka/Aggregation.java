@@ -8,8 +8,8 @@ import java.math.RoundingMode;
 @RegisterForReflection
 public class Aggregation {
 
-    public int stationId;
-    public String stationName;
+    public int itemId;
+    public String itemName;
     public double min = Double.MAX_VALUE;
     public double max = Double.MIN_VALUE;
     public int count;
@@ -17,8 +17,8 @@ public class Aggregation {
     public double avg;
 
     public Aggregation updateFrom(PriceMeasurement measurement) {
-        stationId = measurement.itemId;
-        stationName = measurement.itemName;
+        itemId = measurement.itemId;
+        itemName = measurement.itemName;
 
         count++;
         sum += measurement.value;

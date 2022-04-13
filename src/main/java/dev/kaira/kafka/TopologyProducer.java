@@ -18,29 +18,22 @@ import java.time.Instant;
 @ApplicationScoped
 public class TopologyProducer {
 
-    static final String WEATHER_STATIONS_STORE = "weather-stations-store";
+    static final String PRICE_POOL_STORE = "price-pool-store";
 
-    private static final String WEATHER_STATIONS_TOPIC = "weather-stations";
-    private static final String TEMPERATURE_VALUES_TOPIC = "temperature-values";
-    private static final String TEMPERATURES_AGGREGATED_TOPIC = "temperatures-aggregated";
+    private static final String PRICE_POOL_TOPIC = "price-pool";
+    private static final String PRICE_VALUES_TOPIC = "price-values";
+    private static final String PRICES_AGGREGATED_TOPIC = "prices-aggregated";
 
     @Produces
     public Topology buildTopology() {
         StreamsBuilder builder = new StreamsBuilder();
-
-        ObjectMapperSerde<Price> weatherStationSerde = new ObjectMapperSerde<>(
-                Price.class);
+        ObjectMapperSerde<Price> weatherStationSerde = new ObjectMapperSerde<>(Price.class);
         ObjectMapperSerde<Aggregation> aggregationSerde = new ObjectMapperSerde<>(Aggregation.class);
-
-        KeyValueBytesStoreSupplier storeSupplier = Stores.persistentKeyValueStore(
-                WEATHER_STATIONS_STORE);
-
-        GlobalKTable<Integer, Price> stations = builder.globalTable(
-                WEATHER_STATIONS_TOPIC,
-                Consumed.with(Serdes.Integer(), weatherStationSerde));
+        KeyValueBytesStoreSupplier storeSupplier = Stores.persistentKeyValueStore(PRICE_POOL_STORE);
+        GlobalKTable<Integer, Price> stations = builder.globalTable(PRICE_POOL_TOPIC,Consumed.with(Serdes.Integer(), weatherStationSerde));
 
         builder.stream(
-                        TEMPERATURE_VALUES_TOPIC,
+                PRICE_VALUES_TOPIC,
                         Consumed.with(Serdes.Integer(), Serdes.String())
                 )
                 .join(
@@ -62,7 +55,7 @@ public class TopologyProducer {
                 )
                 .toStream()
                 .to(
-                        TEMPERATURES_AGGREGATED_TOPIC,
+                        PRICES_AGGREGATED_TOPIC,
                         Produced.with(Serdes.Integer(), aggregationSerde)
                 );
 
